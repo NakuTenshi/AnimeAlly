@@ -61,7 +61,7 @@ def MessageHandle(message):
     message_id = message.message_id 
     
     if message.reply_to_message:
-        photo_image_id = message.reply_to_message.message_id
+        # photo_image_id = message.reply_to_message.message_id
         if message.reply_to_message.caption == "what is your favorite anime? ⛩️🌸🍥:)":
             # bot.delete_message(chat_id=chat_id,message_id=message_id) # delete user's input
             # bot.delete_message(chat_id=chat_id,message_id=photo_image_id) # delete bot's anime's name question
