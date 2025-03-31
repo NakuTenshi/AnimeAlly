@@ -33,18 +33,36 @@ def StartForm(chat_id , message_id):
                         caption=start_text , 
                         reply_markup=markup)
 
-def TakeAnimeName(chat_id , message_id):
-    with open("./images/give_photo.jpg" , "rb") as photo:
-        text = (
-            "what is your favorite anime? ⛩️🌸🍥:)"
-        )
+def TakeAnimeName(chat_id , message_id , NotFound=False):
+    if NotFound:
+        with open("./images/notfound_photo.jpg" , "rb") as photo:
+            text = (
+                "your anime is not found *:(*\n"
+                "please try again :),*Sooo*\n"
+                "what is your favorite anime? ⛩️🌸🍥:)"
+            )
 
-        markup = ForceReply(selective=False)
-        bot.send_photo(chat_id=chat_id,
-                    photo=photo,
-                    caption=text,
-                    reply_markup=markup)
-        bot.delete_message(chat_id=chat_id,message_id=message_id) #deleting start message
+            markup = ForceReply(selective=False)
+            bot.send_photo(chat_id=chat_id,
+                            photo=photo,
+                            caption=text,
+                            reply_to_message_id=message_id,
+                            parse_mode="Markdown",
+                            reply_markup=markup)
+
+    else:
+        with open("./images/give_photo.jpg" , "rb") as photo:
+            text = (
+                "what is your favorite anime? ⛩️🌸🍥:)"
+            )
+
+            markup = ForceReply(selective=False)
+            bot.send_photo(chat_id=chat_id,
+                            photo=photo,
+                            caption=text,
+                            reply_markup=markup)
+            bot.delete_message(chat_id=chat_id,message_id=message_id) #deleting start message
+
 
 # start command
 @bot.message_handler(commands=['start'])
@@ -61,36 +79,40 @@ def MessageHandle(message):
     message_id = message.message_id 
     
     if message.reply_to_message:
-        # photo_image_id = message.reply_to_message.message_id
-        if message.reply_to_message.caption == "what is your favorite anime? ⛩️🌸🍥:)":
-            # bot.delete_message(chat_id=chat_id,message_id=message_id) # delete user's input
-            # bot.delete_message(chat_id=chat_id,message_id=photo_image_id) # delete bot's anime's name question
+        if message.reply_to_message.caption.split('\n')[-1] == "what is your favorite anime? ⛩️🌸🍥:)":
             anime_name = message.text
             req = requests.get(f"https://api.jikan.moe/v4/anime?q={anime_name}")
             if req.status_code == 200:
-                anime_info = req.json()['data'][0]
-                anime_id = anime_info["mal_id"]
-                anime_title = anime_info["titles"][0]["title"]
-                anime_description = anime_info["synopsis"].split("\n")[0]
-                anime_image = anime_info["images"]["jpg"]["large_image_url"]
+                
+                try: 
+                    anime_info = req.json()['data'][0]
+                except:
+                    # anime not found 
+                    TakeAnimeName(chat_id=chat_id , message_id=message_id , NotFound=True) 
+                else:
+                    anime_id = anime_info["mal_id"]
+                    anime_title = anime_info["titles"][0]["title"]
+                    anime_description = anime_info["synopsis"].split("\n")[0]
+                    anime_image = anime_info["images"]["jpg"]["large_image_url"]
 
-                text = (
-                    f"*title:* {anime_title}\n"
-                    f"*description:* {anime_description}\n"
-                    "\n*is that correct?*"
-                )
+                    text = (
+                        f"*title:* {anime_title}\n"
+                        f"*description:* {anime_description}\n"
+                        "\n*is that correct?*"
+                    )
 
-                markup = InlineKeyboardMarkup()
-                yes = InlineKeyboardButton("yes" , callback_data="yes")
-                no = InlineKeyboardButton("no" , callback_data="no")
-                markup.row(yes,no)
+                    markup = InlineKeyboardMarkup()
+                    yes = InlineKeyboardButton("yes" , callback_data="yes")
+                    no = InlineKeyboardButton("no" , callback_data="no")
+                    markup.row(yes,no)
 
-                bot.send_photo(chat_id=chat_id, 
-                            photo=anime_image, 
-                            caption=text, 
-                            reply_markup=markup,
-                            parse_mode="Markdown"
-                            )
+                    bot.send_photo(chat_id=chat_id, 
+                                    photo=anime_image, 
+                                    caption=text, 
+                                    reply_to_message_id=message_id,
+                                    reply_markup=markup,
+                                    parse_mode="Markdown"
+                                )
             else:
                 bot.send_message(chat_id=chat_id , text="something went wrong")
 
