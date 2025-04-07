@@ -1,6 +1,6 @@
 # AnimeAlly - Your Anime Recommendation Bot
 
-![AnimeAlly](./images/start_photo.jpg)
+<img src="./images/start_photo.jpg" alt="AnimeAlly" width="300" height="300" />
 
 AnimeAlly is a Telegram bot designed to help you discover new anime based on your favorite titles! Whether you're a seasoned anime fan or just starting your journey, AnimeAlly provides personalized recommendations to enhance your viewing experience.
 
