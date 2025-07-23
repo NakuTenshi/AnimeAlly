@@ -19,3 +19,6 @@ AnimeAlly is a Telegram bot designed to help you discover new anime based on you
    - **About Me**: Get to know the creator of the bot.
    - **Channel**: Access the AnimeAlly channel for more anime-related content.
 3. Follow the prompts to receive your anime suggestions!
+
+---
+**Created by:** EhsanAiDev
