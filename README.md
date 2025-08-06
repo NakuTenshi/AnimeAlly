@@ -21,4 +21,4 @@ AnimeAlly is a Telegram bot designed to help you discover new anime based on you
 3. Follow the prompts to receive your anime suggestions!
 
 ---
-**Created by:** EhsanAiDev
+**Created by:** **********
