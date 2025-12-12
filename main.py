@@ -2,13 +2,27 @@ import requests
 import telebot
 from telebot.types import InlineKeyboardButton,InlineKeyboardMarkup,ForceReply
 from api import API_TOKEN
+import flask 
+from flask import request
+
+
 
 bot = telebot.TeleBot(API_TOKEN)
+app = flask.Flask(__name__)
 options = [
     "suggest anime",
     "about me",
     "channel"
 ]
+
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    json_update = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_update)
+    bot.process_new_updates([update])
+    return "OK", 200
+
 
 def StartForm(chat_id , message_id):
     with open("./images/start_photo.jpg" , "rb") as photo:
@@ -177,6 +191,3 @@ def CallBackHandle(call):
 
     elif call.data == "back":
         StartForm(chat_id=chat_id , message_id=message_id)
-
-print("starting bot ...")
-bot.infinity_polling()
