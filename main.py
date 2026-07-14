@@ -1,9 +1,12 @@
-from flask import Flask, request
+import os
 import telebot
 import requests
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
 from api import API_TOKEN
-import os
+from jinja2 import Template
+from flask import Flask, request
+from playwright.sync_api import sync_playwright
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
+
 
 bot = telebot.TeleBot(API_TOKEN)
 app = Flask(__name__)
@@ -150,11 +153,11 @@ def handle_callback(call):
     elif call.data == options[1]:
         text = (
             "Hi there! My name is *Ehsan*.\n"
-            "People on the internet know me as *Naku Tenshi*. \n\n"
+            "People on the internet know me as *Naku Tenshi* or *None_0x00*. \n\n"
             "Here are some of my social media links:\n"
-            "📱 *Telegram*: [@EhsanNaderlou](tg://resolve?domain=EhsanNaderlou)📱\n"
-            "📸 *Instagram*: [ehsan.aidev](https://www.instagram.com/ehsan.aidev)📸\n"
-            "💻 *GitHub*: [EhsanAiDev](https://github.com/EhsanAiDev)💻\n"
+            "📱 *Telegram*: [@None_0x00](tg://resolve?domain=None_0x00)📱\n"
+            "📸 *Instagram*: [naku_tenshii](https://www.instagram.com/naku_tenshii)📸\n"
+            "💻 *GitHub*: [NakuTenshi](https://github.com/nakutenshi)💻\n"
         )
         bot.send_message(chat_id=chat_id, text=text, parse_mode="Markdown")
 
@@ -196,31 +199,24 @@ def handle_callback(call):
                 reply_markup=markup,
                 parse_mode="Markdown"
             )
-
     elif call.data == "no":
         TakeAnimeName(chat_id=chat_id, message_id=message_id)
-
     elif call.data == "back":
         StartForm(chat_id=chat_id, message_id=message_id)
-
-
+        
 def route_update(update):
     if update.message:
         message = update.message
-
         if message.text == "/start":
             handle_start(message)
         else:
             handle_text_message(message)
-
     elif update.callback_query:
         handle_callback(update.callback_query)
-
-
+        
 @app.route("/webhook", methods=["POST"])
 def webhook():
     json_update = request.get_data().decode("utf-8")
     update = telebot.types.Update.de_json(json_update)
-
     route_update(update)
     return "OK", 200
